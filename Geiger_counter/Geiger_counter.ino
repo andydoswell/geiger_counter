@@ -133,10 +133,14 @@ void setup() {
   lcd.setBacklight(HIGH);
   lcd.clear();
   analogWrite (meter, 255);
+  digitalWrite (spk, HIGH); 
+  digitalWrite (led, HIGH);
   lcd.println(" Geiger Counter "); //splash screen
   lcd.setCursor(0, 1);
   lcd.println("  (C) Doz 2020  ");
   delay (1000);
+  digitalWrite (spk, LOW);
+  digitalWrite (led, LOW);
   lcd.clear();
   lcd.print("andydoz.blogspot");
   lcd.setCursor(0, 1);
@@ -155,7 +159,7 @@ void setup() {
   delay (2000);
   lcd.clear ();
   lastPulse = millis();
-  actualCPM = millis();
+  actualCPMtime = millis();
   decayMillis = millis();
   attachInterrupt(digitalPinToInterrupt(tube), pulseDetect, FALLING);// Interrupt to detect a pulse
 }
