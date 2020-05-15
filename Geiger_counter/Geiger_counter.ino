@@ -133,7 +133,7 @@ void setup() {
   lcd.setBacklight(HIGH);
   lcd.clear();
   analogWrite (meter, 255);
-  digitalWrite (spk, HIGH); 
+  digitalWrite (spk, HIGH);
   digitalWrite (led, HIGH);
   lcd.println(" Geiger Counter "); //splash screen
   lcd.setCursor(0, 1);
@@ -150,12 +150,12 @@ void setup() {
   analogWrite (meter, 0);
   lcd.print(" Battery level");
   bat = BatteryCheck ();
-  lcd.setCursor(0,1);
+  lcd.setCursor(0, 1);
   lcd.print("     ");
   lcd.print(bat);
   lcd.print("%");
-  int level= map(bat,0,100,0,255);
-  analogWrite(meter,level);
+  int level = map(bat, 0, 100, 0, 255);
+  analogWrite(meter, level);
   delay (2000);
   lcd.clear ();
   lastPulse = millis();
@@ -173,9 +173,9 @@ void loop() {
   else {
     updateLCD();
   }
-  analogWrite (meter, (peakCPM/5));
-  if (((millis() - decayMillis) >= 5) && (peakCPM>=10)) {
-    peakCPM-=10;
+  analogWrite (meter, (peakCPM / 5));
+  if (((millis() - decayMillis) >= 5) && (peakCPM >= 10)) {
+    peakCPM -= 10;
     decayMillis = millis();
     BatteryCheck();
   }
@@ -193,28 +193,28 @@ float BatteryCheck() { //get the battery voltage
 
   int sensorValue = analogRead(battery);
   float voltage = sensorValue * (5.0 / 1023.0);
-  int batLevel= (voltage-3.2)*100;
-  int batChar= (batLevel/20);
-  switch (batChar) {
-    case 1:
-    lcd.createChar(1,batt1);
+  int batLevel = (voltage - 3.2) * 100;
+  int batChar = (batLevel / 20) + 1;
+  if (batLevel <= 5) {
     lcd.setBacklight(LOW); // switch of backlight ot save power
     digitalWrite (led, HIGH);// and switch on the LED to alert us
-    break;
+  }
+  switch (batChar) {
+    case 1:
+      lcd.createChar(1, batt1);
+      break;
     case 2:
-    lcd.createChar(1,batt2);
-    lcd.setBacklight(LOW);
-    break;
+      lcd.createChar(1, batt2);
+      break;
     case 3:
-    lcd.createChar(1,batt3);
-    break;
+      lcd.createChar(1, batt3);
+      break;
     case 4:
-    lcd.createChar(1,batt4);
-    break;
+      lcd.createChar(1, batt4);
+      break;
     case 5:
-    lcd.createChar(1,batt5);
-    lcd.setBacklight(HIGH);
-    break;
+      lcd.createChar(1, batt5);
+      break;
   }
   return batLevel;
 }
@@ -246,10 +246,10 @@ void processResults () {
     LTAcumulative += actualCPM;
     LTA = (LTAcumulative / LTAmins);
     CPHcumulative += actualCPM;
-    if (CPHmins==60) {// after 1 hour, update CPH for display
+    if (CPHmins == 60) { // after 1 hour, update CPH for display
       CPH = CPHcumulative;
-      CPHmins=0;
-      CPHcumulative =0;
+      CPHmins = 0;
+      CPHcumulative = 0;
     }
   }
 
@@ -285,6 +285,6 @@ void updateLCD () { // Check the battery, update the LCD display with all curren
     lcd.setCursor (0, 1);
     lcd.print("-");
   }
-  lcd.setCursor(0,0);
+  lcd.setCursor(0, 0);
   lcd.write(1);
 }
