@@ -196,6 +196,9 @@ float BatteryCheck() { //get the battery voltage
   int sensorValue = analogRead(battery);
   float voltage = sensorValue * (5.0 / 1023.0);
   int batLevel = (voltage - 3.2) * 100;
+  if (batLevel > 100) {
+    batLevel = 100;
+  }
   int batChar = (batLevel / 20) + 1;
   if (batLevel <= 5) {
     lcd.setBacklight(LOW); // switch of backlight ot save power
