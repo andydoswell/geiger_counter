@@ -30,7 +30,7 @@ unsigned long LTAcumulative;// cumulative number of counts since system start
 unsigned long CPHcumulative;// cumulative number of counts per hour
 unsigned int CPH;// counts per hour for display perposes.
 unsigned long LTAMins;// number of minutes since system start
-int bat;// battery level
+unsigned int bat;// battery level
 int CPHmins; //time since last CPH update in mins
 LiquidCrystal_I2C  lcd(0x3F, 16, 2);
 
@@ -146,10 +146,14 @@ void setup() {
   lcd.setCursor(0, 1);
   lcd.print("     .com");
   delay (1000);
+  for (peakMeterVal = 0; peakMeterVal <= 100; peakMeterVal++) {
+    bat += BatteryCheck ();
+  }
+  bat = bat / peakMeterVal;
+  peakMeterVal = 0;
   lcd.clear();
   analogWrite (meter, 0);
   lcd.print(" Battery level");
-  bat = BatteryCheck ();
   lcd.setCursor(0, 1);
   lcd.print("     ");
   lcd.print(bat);
@@ -165,14 +169,12 @@ void setup() {
 }
 
 void loop() {
-  if (pulse) { //if the tube gets a pulse, update the results
+  while (pulse) { //if the tube gets a pulse, update the results
     processResults();
     pulse = false;
     tick();
   }
-  else {
-    updateLCD();
-  }
+  updateLCD();
   analogWrite (meter, (peakCPM / 5));
   if (((millis() - decayMillis) >= 5) && (peakCPM >= 10)) {
     peakCPM -= 10;
