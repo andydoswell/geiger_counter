@@ -1,5 +1,5 @@
 /*  Geiger Counter project
-    (c) A.G.Doswell May 2020
+    (c) A.G.Doswell March 2022
 
     Hardware details can be found at andydoz.blogspot.com
 
@@ -139,15 +139,15 @@ void setup() {
   digitalWrite (led, HIGH);
   lcd.println(" Geiger Counter "); //splash screen
   lcd.setCursor(0, 1);
-  lcd.println("  (C) Doz 2020  ");
-  delay (1000);
+  lcd.println("  (C) Doz 2022  ");
+  delay (500);
   digitalWrite (spk, LOW);
   digitalWrite (led, LOW);
   lcd.clear();
   lcd.print("andydoz.blogspot");
   lcd.setCursor(0, 1);
   lcd.print("     .com");
-  delay (1000);
+  delay (500);
   for (peakMeterVal = 0; peakMeterVal <= 100; peakMeterVal++) {
     bat += BatteryCheck ();
   }
@@ -162,12 +162,12 @@ void setup() {
   lcd.print("%");
   int level = map(bat, 0, 100, 0, 255);
   analogWrite(meter, level);
-  delay (2000);
+  delay (1000);
   lcd.clear ();
   lastPulse = millis();
   actualCPMtime = millis();
   decayMillis = millis();
-  attachInterrupt(digitalPinToInterrupt(tube), pulseDetect, FALLING);// Interrupt to detect a pulse
+  attachInterrupt(digitalPinToInterrupt(tube), pulseDetect, RISING);// Interrupt to detect a pulse
 }
 
 void loop() {
@@ -178,35 +178,25 @@ void loop() {
     pulse = false;
     tick();
   }
-  /*if (tickFlag) {
-    tickCount++;
-    if (tickCount >=1){
-      tickFlag= false;
-      tickCount = 0;
-       // set LED & SPK low
-    }
-    }*/
+
   if (loopCounter >= 65000) {
     updateLCD();
     BatteryCheck();
     loopCounter = 0;
   }
   analogWrite (meter, (peakCPM / 5));
-  if (((millis() - decayMillis) >= 5) && (peakCPM >= 10)) {
-    peakCPM -= 10;
+  if (((millis() - decayMillis) >= 2) && (peakCPM >= 10)) 
+  {
+    peakCPM --;
     decayMillis = millis();
   }
   loopCounter++;
 }
 
 void tick() {
- // digitalWrite (spk, HIGH); // make the speaker click, and flash the LED.
- // digitalWrite (led, HIGH);
+// make the speaker click, and flash the LED.
   PORTD= PORTD | 0b00110000;
-  
   delay (1);
-//  digitalWrite (spk, LOW);
- // digitalWrite (led, LOW);
   PORTD= PORTD & 0b11001111;
 
 }
@@ -259,7 +249,7 @@ void processResults () {
   if (peakCPM > 1275) { // limit peak value so as not to over-range meter
     peakCPM = 1275;
   }
-  analogWrite (meter, (peakCPM / 5)); // write peak value to meter
+  //analogWrite (meter, (peakCPM / 5)); // write peak value to meter
   totalCPM += countsPerMin; // update totalCPM
 
   if (millis() - actualCPMtime >= 60000) { // After one minute, calculate ACPM, for display, and update CPH
